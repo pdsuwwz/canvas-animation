@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>三角函数曲线运动</title>
+  <style>
+    *{
+      padding: 0;
+      margin: 0;
+    }
+    body{
+      overflow: hidden;
+    }
+
+    canvas{
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script>
+    ;(function(doc, win, undefined){
+      var canvas = doc.querySelector("#canvas");
+      canvas.width = doc.documentElement.clientWidth;
+      canvas.height = doc.documentElement.clientHeight;
+      var ctx, arcArr = [], flag = 0
+      var rate = 10; // 移动速度
+
+      if(canvas.getContext){
+        ctx = canvas.getContext("2d");
+        createArc();
+        requestAnimationFrame(step);
+      }
+      
+      function step(){
+        // 每次画之前清空画布
+        // ctx.clearRect(0, 0, canvas.width, canvas.height)
+        for(var i = 0, length = arcArr.length; i < length; i++){
+          var line = arcArr[i].line;
+          arcArr[i].y -= rate;
+          arcArr[i].line.I = line.I += Math.PI / 180;
+          arcArr[i].x = canvas.width / 2 + line.A * Math.sin(line.W * line.I + Math.PI / 180);
+          drawing(arcArr[0]);
+        }
+        requestAnimationFrame(step)
+      }
+
+      // 创建要绘制的圆的坐标等信息
+      function createArc(){
+        arcArr.push({
+          x: canvas.width / 2,
+          y: canvas.height - 20,
+          r: 10,
+          line: {
+            A: 100, //振幅
+            I: 0, // 相位
+            W: 10, // 角速度
+          }
+        });
+      }
+      
+      // 画圆
+      function drawing(obj){
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(obj.x, obj.y, obj.r, 0, 2 * Math.PI);
+        ctx.stroke()
+        ctx.closePath()
+        ctx.restore();
+      }
+      
+    }(document, window, undefined));
+  </script>
+</body>
+</html>
