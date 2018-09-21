@@ -16,19 +16,26 @@
 
     canvas{
       position: fixed;
-      width: 100%;
-      height: 100%;
+      width: 500px;
+      height: 500px;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      border: 1px solid #eee;
     }
   </style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
+  <canvas id="canvas" width="500" height="500"></canvas>
   <script>
     ;(function(doc, win, undefined){
       var canvas = doc.querySelector("#canvas");
-      canvas.width = doc.documentElement.clientWidth;
-      canvas.height = doc.documentElement.clientHeight;
+      // canvas.width = doc.documentElement.clientWidth;
+      // canvas.height = doc.documentElement.clientHeight;
       var ctx, arcArr = [], flag = 0;
+      var rate = 10; // 移动速度
       if(canvas.getContext){
         ctx = canvas.getContext("2d");
         createArc();
@@ -39,7 +46,12 @@
         // 每次画之前清空画布
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         // 每次绘制前都增大圆的半径、逐步减小透明度
+        console.log(arcArr.length)
         for(var i = 0, length = arcArr.length; i < length; i++){
+
+          var line = arcArr[i].line;
+          arcArr[i].y -= rate;
+          
           if(arcArr[i].alpha < 0){
             arcArr.splice(i , 1) // 删掉已经消失的圆
             length = arcArr.length; // bug：需要重新获取下数组长度，否则将报错而导致循环中断
@@ -51,12 +63,15 @@
             arcArr[i].r -= 0.3;
             arcArr[i].r <= 0 ? arcArr[i].r = 0 : null;
           }
-          arcArr[i].y -= 1; // 设置向上偏移
           arcArr[i].alpha -= 0.01; // 设置透明度
+          arcArr[i].y -= 1; // 设置向上偏移
+          arcArr[i].line.I = line.I += Math.PI / 180;
+          arcArr[i].x = arcArr[i].x + line.A * Math.sin(line.W * line.I);
         }
         for(var i = 0, length = arcArr.length; i < length; i++){
           drawing(arcArr[i]);
         }
+        ctx.restore();
         requestAnimationFrame(step)
       }
 
@@ -75,9 +90,14 @@
             r: r,
             rgb: rgb,
             alpha: alpha,
-            trend: trend
+            trend: trend,
+            line: {
+              A: 10, //振幅
+              I: 0, // 相位
+              W: 10, // 角速度
+            }
           });
-        }, 100)
+        }, 200)
       }
       
       // 画圆
@@ -86,8 +106,9 @@
         ctx.fillStyle = "rgba("+obj.rgb+","+obj.alpha+")";
         ctx.beginPath();
         ctx.arc(obj.x, obj.y, obj.r, 0, 2*Math.PI);
+        // ctx.fillRect(obj.x, obj.y, obj.r, obj.r);
         ctx.fill();
-        ctx.restore();
+        ctx.closePath();
       }
       
     }(document, window, undefined));

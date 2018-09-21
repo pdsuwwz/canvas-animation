@@ -43,8 +43,8 @@
         for(var i = 0, length = arcArr.length; i < length; i++){
           var line = arcArr[i].line;
           arcArr[i].y -= rate;
-          arcArr[i].line.I = line.I += Math.PI / 180;
-          arcArr[i].x = canvas.width / 2 + line.A * Math.sin(line.W * line.I + Math.PI / 180);
+          arcArr[i].line.I = line.I += Math.PI / 180; // 设置相位，即函数向上偏移的量
+          arcArr[i].x = canvas.width / 2 + line.A * Math.sin(line.W * line.I); // 左右的摆动坐标 Asin(Wt)
           drawing(arcArr[0]);
         }
         requestAnimationFrame(step)
