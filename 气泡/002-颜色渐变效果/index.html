@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>气泡</title>
+  <title>颜色渐变效果</title>
   <style>
     *{
       padding: 0;
@@ -22,7 +22,7 @@
   </style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
+  <canvas id="canvas">缺点：气泡会越来越多，数组会一直增大，极其影响性能</canvas>
   <script>
     ;(function(doc, win, undefined){
       var canvas = doc.querySelector("#canvas");
@@ -40,10 +40,6 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         // 每次绘制前都增大圆的半径、逐步减小透明度
         for(var i = 0, length = arcArr.length; i < length; i++){
-          if(arcArr[i].alpha < 0){
-            arcArr.splice(i , 1) // 删掉已经消失的圆
-            length = arcArr.length; // bug：需要重新获取下数组长度，否则将报错而导致循环中断
-          }
           arcArr[i].r++;
           arcArr[i].alpha -= 0.01;
         }
