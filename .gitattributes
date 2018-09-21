@@ -1,0 +1,3 @@
+*.html linguist-language=canvas
+*.css linguist-language=canvas
+*.js linguist-language=canvas
