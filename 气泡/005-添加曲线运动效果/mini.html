@@ -16,24 +16,22 @@
 
     canvas{
       position: fixed;
-      width: 100%;
-      height: 100%;
+      width: 200px;
+      height: 500px;
       left: 0;
       right: 0;
       top: 0;
       bottom: 0;
       margin: auto;
-      border: 1px solid #eee;
+      /* border: 1px solid #eee; */
     }
   </style>
 </head>
 <body>
-  <canvas id="canvas" width="500" height="500"></canvas>
+  <canvas id="canvas" width="200" height="500"></canvas>
   <script>
     ;(function(doc, win, undefined){
       var canvas = doc.querySelector("#canvas");
-      canvas.width = doc.documentElement.clientWidth;
-      canvas.height = doc.documentElement.clientHeight;
       var ctx, arcArr = [], flag = 0;
       var rate = 10; // 移动速度
       if(canvas.getContext){
@@ -55,16 +53,16 @@
             arcArr.splice(i , 1) // 删掉已经消失的圆
             length = arcArr.length; // bug：需要重新获取下数组长度，否则将报错而导致循环中断
           }
-          if(arcArr[i].r <= 15 && arcArr[i].trend){ // 正在变大
+          if(arcArr[i].r <= 10 && arcArr[i].trend){ // 正在变大
             arcArr[i].r++;
-          }else if(arcArr[i].r > 15 || !arcArr[i].trend){ // 正在变小
+          }else if(arcArr[i].r > 10 || !arcArr[i].trend){ // 正在变小
             arcArr[i].trend = false;
             arcArr[i].r -= 0.3;
             arcArr[i].r <= 0 ? arcArr[i].r = 0 : null;
           }
           arcArr[i].alpha -= 0.01; // 设置透明度
           arcArr[i].line.I = line.I += Math.PI / 180;
-          arcArr[i].x = arcArr[i].x + line.A * Math.sin(line.W * line.I);
+          arcArr[i].x = arcArr[i].x + line.A * Math.sin(line.W * line.I) * Math.random();
           arcArr[i].y -= line.W * line.I; // 设置向上偏移
         }
         for(var i = 0, length = arcArr.length; i < length; i++){
@@ -76,9 +74,9 @@
       // 创建要绘制的圆的坐标等信息
       function createArc(){
         var timer = setInterval(function(){
-          var x = Math.random() * canvas.width,
-              y = Math.random() * canvas.height,
-              r = 10,
+          var x = Math.random() * canvas.width * 4 / 6 + canvas.width * 1 / 6,
+              y = canvas.height - 20,
+              r = 5,
               rgb = Math.random()*255+","+Math.random()*255+","+Math.random()*255,
               alpha = 1,
               trend = true; // true 为变大，false 变小
@@ -90,12 +88,12 @@
             alpha: alpha,
             trend: trend,
             line: {
-              A: 10, //振幅
+              A: 5, //振幅
               I: 0, // 相位
-              W: 5, // 角速度
+              W: 15, // 角速度
             }
           });
-        }, 300)
+        }, 1000 / 60)
       }
       
       // 画圆
